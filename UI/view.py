@@ -6,44 +6,53 @@ class View(ft.UserControl):
         super().__init__()
         # page stuff
         self._page = page
-        self._page.title = "Lab12-Simulazione esame"
+        self._page.title = "Sim11 - Registi in co-direzione"
         self._page.horizontal_alignment = 'CENTER'
         self._page.theme_mode = ft.ThemeMode.LIGHT
-        # controller (it is not initialized. Must be initialized in the main, after the controller is created)
+        # controller (inizializzato nel main, dopo la creazione del controller)
         self._controller = None
         # graphical elements
         self._title = None
-        self.txt_name = None
-        self.btn_hello = None
+        self._ddanno1 = None
+        self._ddanno2 = None
+        self._btnCreaGrafo = None
+        self._btnCammino = None
         self.txt_result = None
-        self.txt_container = None
 
     def load_interface(self):
         # title
-        self._title = ft.Text("TdP-Simulazione esame imdb", color="blue", size=24)
+        self._title = ft.Text("TdP - Grafo dei registi (co-direzione)",
+                              color="blue", size=24)
         self._page.controls.append(self._title)
 
+        # --- Riga 1: dropdown anno min/max + bottone Crea Grafo ---
+        self._ddanno1 = ft.Dropdown(label="Anno min", hint_text="Anno minimo")
+        self._ddanno2 = ft.Dropdown(label="Anno max", hint_text="Anno massimo")
 
-        self._ddrating1 = ft.Dropdown(label="Voto", hint_text="Rating")
-        self._ddrating2 = ft.Dropdown(label="Voto", hint_text="Rating")
+        # il controller esiste gia': il main chiama set_controller
+        # PRIMA di load_interface
+        self._controller.fillDDsAnni()
 
+        self._btnCreaGrafo = ft.ElevatedButton(
+            text="Crea Grafo",
+            on_click=self._controller.handleCreaGrafo)
 
-        self._controller.fillDDsRating()
-        self._btnCreaGrafo = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handleCreaGrafo)
-
-        row1 = ft.Row([self._ddrating1,self._ddrating2, self._btnCreaGrafo], alignment=ft.MainAxisAlignment.CENTER,
+        row1 = ft.Row([self._ddanno1, self._ddanno2, self._btnCreaGrafo],
+                      alignment=ft.MainAxisAlignment.CENTER,
                       vertical_alignment=ft.CrossAxisAlignment.END)
-
         self._page.controls.append(row1)
 
-        self._btnCammino = ft.ElevatedButton(text="Trova Cammino", on_click=self._controller.handleCammino)
-
+        # --- Riga 2: bottone del punto 2 ---
+        self._btnCammino = ft.ElevatedButton(
+            text="Cerca percorso",
+            on_click=self._controller.handleCammino)
         row2 = ft.Row([self._btnCammino],
                       alignment=ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row2)
 
-        # List View where the reply is printed
-        self.txt_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+        # List View dove viene stampato l'output
+        self.txt_result = ft.ListView(expand=1, spacing=10, padding=20,
+                                      auto_scroll=True)
         self._page.controls.append(self.txt_result)
         self._page.update()
 
